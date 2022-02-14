@@ -1,0 +1,116 @@
+import {StyleSheet} from 'react-native'
+import { colors } from './theme'
+
+const {dark,gray,teal} = colors
+export const styles = StyleSheet.create({
+    homeContainer:{
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor:'white'
+    },
+    textLightSm:{
+        fontSize:12,
+        fontWeight:'normal',
+        color:gray[100], 
+    },
+    textDarkSm:{
+        fontSize:12,
+        fontWeight:'normal',
+        color:gray[600], 
+    },
+    textLightMd:{
+        fontSize:18,
+        fontWeight:'normal',
+        color:gray[100], 
+    },
+    textDarkMd:{
+        fontSize:18,
+        fontWeight:'normal',
+        color:gray[600], 
+    },
+    textLightLg:{
+        fontSize:24,
+        fontWeight:'bold',
+        color:gray[100], 
+    },
+    textDarkLg:{
+        fontSize:24,
+        fontWeight:'bold',
+        color:gray[600], 
+    },
+    buttonPrimary:{
+        backgroundColor:dark[400],
+        paddingHorizontal:20,
+        paddingVertical:5,
+        borderRadius:10
+    },
+    buttonSecondary:{
+        backgroundColor:teal[400],
+        paddingHorizontal:20,
+        paddingVertical:5,
+        borderRadius:10
+    },
+    buttonLight:{
+        backgroundColor:'white',
+        paddingHorizontal:20,
+        paddingVertical:5,
+        borderRadius:10
+    },
+    inputField:{
+        backgroundColor:gray[100],
+        paddingHorizontal:20,
+        paddingVertical:5,
+        borderRadius:10,
+        width:250,
+        margin:5,
+        color:colors.gray[600]
+    },
+    card:{
+        backgroundColor:'white',
+        elevation:3,
+        borderRadius:10,
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center',
+        padding:10,
+    },
+    flex:{
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    row:{       
+        flexDirection:'row'
+    },
+    col:{       
+        flexDirection:'column'
+    },
+    basicInput:{
+        marginHorizontal:40,
+        color:colors.gray[500]
+    },
+    homeHeader:{
+        height:100,
+        flexDirection:'row',
+        alignItems:'center',
+        flex:1,
+        width:'100%',
+        justifyContent:'space-evenly'
+    },
+    inputFieldFocus:{
+        backgroundColor:gray[100],
+        paddingHorizontal:20,
+        paddingVertical:5,
+        borderRadius:10,
+        width:250,
+        margin:5,
+        color:colors.gray[600],
+        elevation:5,
+        transform:[{scale:1.08}]
+    },
+
+
+
+    
+})

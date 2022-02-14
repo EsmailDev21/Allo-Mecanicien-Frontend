@@ -1,0 +1,69 @@
+import {StyleSheet} from 'react-native'
+import { colors } from './theme'
+
+const {dark,gray,teal} = colors
+export const styles = StyleSheet.create({
+    landingContainer:{
+        flex:1,
+        justifyContent:"center",
+        alignItems:"center",
+        height:100,
+        backgroundColor:"#fff"
+    },
+    landingWrapper:{
+        marginBottom:20,
+        flexDirection:"row",
+        
+    },
+    logo:{
+        justifyContent:"center",
+        backgroundColor:"#111433",
+        borderTopRightRadius:24,
+        borderBottomLeftRadius:24,
+        borderBottomRightRadius:24,
+        borderTopLeftRadius:5,
+        paddingHorizontal:10
+    },
+    logoText:{
+        textAlign:"center",
+        color:"#fff",
+        fontWeight:'700',
+        fontSize:32
+    },
+    logoText2:{
+        textAlign:"center",
+        color:"#111433",
+        fontWeight:'700',
+        fontSize:32
+    },
+    landingTitle:{
+        textAlign:"center",
+        color:teal[300],
+        fontWeight:"300",
+        marginBottom:100,
+        fontSize:18
+    },
+    landingMainBtn:{
+        backgroundColor:"#111433",
+        paddingHorizontal:40,
+        paddingVertical:5,
+        borderRadius:10,
+        marginBottom:10
+    },
+    landingLightBtn:{
+        backgroundColor:"#fff",
+        paddingHorizontal:40,
+        paddingVertical:5,
+        borderRadius:20
+    },
+    landingMainBtnText:{
+        color:"#fff",
+        fontWeight:"700",
+        fontSize:18
+    },
+    landingLightBtnText:{
+        color:"#111433",
+        fontWeight:"700",
+        fontSize:18
+    }
+})
