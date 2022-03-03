@@ -10,7 +10,8 @@ type mainInputProps = {
 	placeHolder: string;
 	secure: boolean;
 	numberOfLines?: number;
-	value?:string
+	value?:string,
+	onChange?:(e:string)=>void
 };
 const MainInput = ({
 	textColor,
@@ -19,7 +20,8 @@ const MainInput = ({
 	placeHolder,
 	secure = false,
 	numberOfLines,
-	value
+	value,
+	onChange
 }: mainInputProps) => {
 	const [focus, setFocus] = useState(false);
 	return (
@@ -39,6 +41,7 @@ const MainInput = ({
 				placeholder={placeHolder}
 				secureTextEntry={secure}
 				numberOfLines={numberOfLines}
+				onChangeText={onChange}
 			/>
 		</View>
 	);

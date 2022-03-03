@@ -85,6 +85,7 @@ const Panel = ({navigation}:any) => {
 					}}
 					name="Settings"
 					component={Settings}
+					
 				/>
 				<Tab.Screen
 					options={{

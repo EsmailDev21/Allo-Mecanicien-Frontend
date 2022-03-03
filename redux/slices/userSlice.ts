@@ -24,7 +24,11 @@ export interface UserData {
 	salaryPerHour: number,
 	receivedNotifications: [],
 	sentNotification : [],
-	activityId:string
+	activityId:string,
+	earnings:number,
+	servicesDone : number,
+	isVerified: boolean,
+	rating:number
 
 }
 export interface UserState {
@@ -53,7 +57,12 @@ const initialState: UserState = {
 		notificationToken:'',
 		receivedNotifications:[],
 		salaryPerHour:0,
-		sentNotification:[]
+		sentNotification:[],
+		servicesDone:0,
+		earnings:0,
+		isVerified : false,
+		rating:5
+
 
 	}
 };

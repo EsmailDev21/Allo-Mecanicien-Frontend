@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { homeStyles } from "../styles/home";
@@ -13,7 +13,8 @@ import { API_URL } from "../url";
 import { colors } from "../styles/theme";
 import { setServices } from "../redux/slices/allServicesSlice";
 import { selectNearbyMecaniciens, selectLoading, setNearbyMecaniciens } from "../redux/slices/nearbyMecaniciensSlice";
-
+import * as Notifications from "expo-notifications";
+import { Subscription } from "expo-modules-core";
 const initialLocation = {
 	coords: {
 		latitude: 0,
@@ -27,6 +28,13 @@ export interface MecanicienLocation{
 	},
 	userId:string
 }
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true,
+	}),
+});
 const HomeComp = () => {
 	const navigation = useNavigation();
 	const params = {
@@ -35,7 +43,7 @@ const HomeComp = () => {
 	
 	const dispatch = useDispatch();
 	const loading = useSelector(selectLoading);
-	const nearbyMecaniciens = useSelector(selectData);
+	const nearbyMecaniciens = useSelector(selectNearbyMecaniciens);
 	const userData = useSelector(selectUserData)
 	const [singlelocation,setSignleLocation] = useState<MecanicienLocation>({
 		location:{
@@ -44,7 +52,7 @@ const HomeComp = () => {
 		},
 		userId:''
 	})
-	const [locations, setlocations] = useState<MecanicienLocation[]>([])
+	const [locations, setlocations] = useState([])
 	const { location, address } = useLocation(initialLocation);
 	const region = {
 		latitude: location.coords.latitude,
@@ -53,13 +61,14 @@ const HomeComp = () => {
 		longitudeDelta: 0,
 	};
 	
+	const [notification, setNotification] = useState<Notifications.Notification>();
 	const getNearbyMecaniciens = async(id:string) => {
 		const res =  await axios.get(`${API_URL}/user/mecaniciens/nearby/${id}`)
 		dispatch(setNearbyMecaniciens([...res.data]))
 	}
 	const updateUserLocation = async(id:string)=> {
 		const res = await axios.put(`${API_URL}/user/update/${id}`,{
-			currentAddress:address
+			currentAddress:address,
 		})
 		dispatch(setUserData({
 			...userData,
@@ -67,24 +76,34 @@ const HomeComp = () => {
 		}))
 		console.log(userData)
 	}
-	/*const getAllLocations = async (users:UserData[]) => {
+	const updateUserNotifToken = async(token:string)=> {
 		
-		let response = await users.map((user)=> {return user.currentAddress})
-		if(response.length!==0){
-			response.map(async(res)=> {
-					await axios.get(
-					`https://eu1.locationiq.com/v1/forward.php?key=${params.access_key}&&q=${res}&format=json`
-				).then(
-					res => {
-						if(res.data)
-							//setlocations([...res.data]);
-							console.log(res.data)
-					}
-				).catch(err=>console.log(err))
-
+		dispatch(setUserData({
+			...userData,
+			notificationToken:token
+		}))
+		console.log(userData)
+	}
+	const getAllLocations = async (users:UserData[]) => {
+		let addresses: { userAddress: string; userId: string; }[] = []
+		 let mecaniciensLocations: any[] = []
+		users.forEach(user => {
+			addresses.push({userAddress:user.currentAddress,userId:user.id
 			})
+		})
+		if(addresses.length!==0){
+			addresses.forEach(async(address)=> {
+				const response = await axios.get(
+					`https://eu1.locationiq.com/v1/forward.php?key=${params.access_key}&&q=${address.userAddress}&format=json`
+				)
+				mecaniciensLocations.push(response.data);
+			})
+			setlocations([...mecaniciensLocations])
+			console.log(locations);
+		}else{
+			console.log('error')
 		}
-	}*/
+	}
 	/*const getUserLocation = async (id:string) => {
 		 await axios.get(`${API_URL}/user/location/${id}`).then(
 			 res => {
@@ -100,9 +119,13 @@ const HomeComp = () => {
 		 .catch(err => console.log(err))
 		updateUserLocation(id)
 	}*/
+	const notificationListener = useRef<Subscription>();
+	const responseListener = useRef<Subscription>();
 	useEffect(
 		()=> {
-			updateUserLocation(userData.id);
+			if(address !== null && address !=='Loading address ...'){
+				updateUserLocation(userData.id)
+			}
 			getNearbyMecaniciens(userData.id);
 			//getAllLocations(nearbyMecaniciens);
 			const getLocations = ()=>{
@@ -117,11 +140,35 @@ const HomeComp = () => {
 					});
 				})
 			console.log(nearbyMecaniciens)}
-			getLocations()
+			getAllLocations(nearbyMecaniciens)
+			registerForPushNotificationsAsync().then((token) => {
+				axios.put(`${API_URL}/user/update/${userData.id}`,{
+					notificationToken: token,
+				})
+				dispatch(setUserData({
+					...userData,
+					notificationToken: token,
+				  }))
+			});
+			
+			
+			// This listener is fired whenever a notification is received while the app is foregrounded
+			notificationListener.current = Notifications.addNotificationReceivedListener(
+				setNotification
+			);
+	
+			responseListener.current = Notifications.addNotificationResponseReceivedListener(
+				(res) => setNotification(res.notification)
+			);
+	
+			return () => {
+				notificationListener.current && Notifications.removeNotificationSubscription(
+					notificationListener.current
+				);
+				responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+			};	
 		},[userData.id]
 	)	
-	
-	
 	
 	return (
 		<View style={homeStyles.container}>
@@ -139,7 +186,7 @@ const HomeComp = () => {
 						}}
 					/>
 					
-						{locations?locations.map(
+						{/*locations?locations.map(
 							(item)=> (
 								<Marker coordinate={{
 									longitude:item.location.lon,
@@ -149,7 +196,7 @@ const HomeComp = () => {
 								 />
 							)
 						):<Text>Loading nearby mecaniciens</Text>
-							}
+							*/}
 				</MapView>
 			</View>
 
@@ -183,3 +230,32 @@ const localStyles = StyleSheet.create({
 		paddingHorizontal: 10,
 	},
 });
+
+async function registerForPushNotificationsAsync() {
+	let token;
+	
+		const {
+			status: existingStatus,
+		} = await Notifications.getPermissionsAsync();
+		let finalStatus = existingStatus;
+		if (existingStatus !== "granted") {
+			const { status } = await Notifications.requestPermissionsAsync();
+			finalStatus = status;
+		}
+		if (finalStatus !== "granted") {
+			alert("Failed to get push token for push notification!");
+			return;
+		}
+		token = (await Notifications.getExpoPushTokenAsync()).data;
+		console.log(token);
+	if (Platform.OS === "android") {
+		Notifications.setNotificationChannelAsync("default", {
+			name: "default",
+			importance: Notifications.AndroidImportance.MAX,
+			vibrationPattern: [0, 250, 250, 250],
+			lightColor: "#FF231F7C",
+		});
+	}
+
+	return token;
+}

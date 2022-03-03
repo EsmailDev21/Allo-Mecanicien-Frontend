@@ -13,6 +13,7 @@ import { useToast } from "react-native-toast-notifications";
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { API_URL } from "../url";
+import { TouchableRipple } from "react-native-paper";
 const LoginForm = (): JSX.Element => {
 	const [focus, setFocus] = React.useState(false);
 	const [secure, setSecure] = React.useState(true);
@@ -48,7 +49,7 @@ const LoginForm = (): JSX.Element => {
 			type: "success",
 			successColor:"#25ff8d"
 		})
-		if (user.role==="PASSAGER")
+		if (res.data[0].user.role==="PASSAGER")
 		navigation.navigate('Home')
 		else
 		navigation.navigate('MecanicienPanel')

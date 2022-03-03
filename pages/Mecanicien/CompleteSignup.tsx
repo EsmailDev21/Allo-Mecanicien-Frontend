@@ -32,16 +32,18 @@ const CompleteSignup = () => {
 	const [activities, setActivities] = useState([]);
 	const navigation = useNavigation();
 	const dispatch = useDispatch();
-	const [phone, setPhone] = useState("");
 	const [accountNumber, setAccountNumber] = useState("");
 	const [focus, setFocus] = useState(false);
 	const [focus2, setFocus2] = useState(false);
 	const [focus4, setFocus4] = useState(false);
 	const toast = useToast();
+	const phone = useSelector(selectUserData).phone
 	const name = useSelector(selectUserData).fullName;
 	const email = useSelector(selectUserData).email;
 	const password = useSelector(selectUserData).password;
 	const role = useSelector(selectUserData).role;
+	
+	const permanentAddress = useSelector(selectUserData).permanentAddress;
 	const registerMecanicien = async (
 		phone: string,
 		activityId: string,
@@ -58,6 +60,7 @@ const CompleteSignup = () => {
 					phone: parseInt(phone),
 					activityId: activityId,
 					accountNumber: accountNumber,
+					permanentAddress:permanentAddress
 				},
 				{
 					headers: {
@@ -94,6 +97,7 @@ const CompleteSignup = () => {
 		const res = await axios
 			.get(`${API_URL}/type-service/all`)
 			setActivities(res.data)
+			
 	};
 
 	let activitiesList: activityProps[] = activities;
@@ -111,7 +115,7 @@ const CompleteSignup = () => {
 				value: item.label,
 			};
 		});
-	}, [activities]);
+	}, []);
 
 	return (
 		<SafeAreaView style={{ height: "100%" }}>
@@ -136,30 +140,7 @@ const CompleteSignup = () => {
 						Créer un compte
 					</Text>
 					<View>
-						<View
-							style={
-								!focus
-									? styles.inputField
-									: [
-											styles.inputField,
-											{
-												elevation: 4,
-												transform: [{ scale: 1.08 }],
-												marginVertical: 10,
-											},
-									  ]
-							}
-						>
-							<TextInput
-								value={phone}
-								onChangeText={(val) => setPhone(val)}
-								onEndEditing={() => setFocus(false)}
-								onFocus={() => setFocus(true)}
-								autoCompleteType="tel"
-								textContentType="telephoneNumber"
-								placeholder="Phone"
-							/>
-						</View>
+						
 						<View
 							style={
 								!focus2

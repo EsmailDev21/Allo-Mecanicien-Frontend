@@ -2,28 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store/store";
 
 export interface NotificationState {
-	data:{
-        id:string,
-        title:string,
-        description:string,
-        image:string,
-        token:string
-    },
-    error:string,
-    isLoading:boolean
+	notificationAccept:{
+        eta:string,
+        prix:string
+    }
 }
 
 const initialState: NotificationState = {
-	data:{
-        id:'',
-        title:'',
-        description:'',
-        image:'',
-        token:''
-        
-    },
-    error:'',
-    isLoading:false
+	notificationAccept:{
+        eta:'',
+        prix:'',
+    }
 	
 };
 
@@ -31,35 +20,19 @@ export const notificationSlice = createSlice({
 	name: "notification",
 	initialState,
 	reducers: {
-		notificationInit:(state)=>{
-            state.isLoading = true
+		setNotificationAcceptPrice:(state,action)=> {
+            state.notificationAccept.prix = action.payload
         },
-        notificationSent:(state,{payload})=>{
-            state.isLoading = false
-            state.data = payload;
-        },
-        notificationFailed:(state)=>{
-            state.isLoading = false,
-            state.data = {
-                id:'',
-                description:'',
-                image:'',
-                title:'',
-                token:''
-            }
-        },
-        notificationError:(state,action)=>{
-            state.error = action.payload
+        setNotificationAcceptETA:(state,action)=> {
+            state.notificationAccept.eta = action.payload
         }
        
 	},
 });
 
 // Action creators are generated for each case reducer function
-export const { notificationInit,notificationSent,notificationFailed,notificationError } = notificationSlice.actions;
+export const { setNotificationAcceptETA,setNotificationAcceptPrice } = notificationSlice.actions;
 //selectors
-export const selectData = (state: RootState) => state.notification.data;
-export const selectLoading = (state: RootState) => state.notification.isLoading;
-export const selectError =(state:RootState) =>state.notification.error
+export const selectNotificationAccept = (state: RootState) => state.notification.notificationAccept;
 
 export default notificationSlice.reducer;

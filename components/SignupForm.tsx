@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, Picker } from "react-native";
+import { View, Text, TextInput, Picker, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../styles/global";
 import { AntDesign } from "@expo/vector-icons";
@@ -19,6 +19,7 @@ import { useToast } from "react-native-toast-notifications";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { API_URL } from "../url";
 import { PaperSelect } from "react-native-paper-select";
+import { ActivityIndicator, TouchableRipple } from "react-native-paper";
 
 const SignupForm = () => {
 	const navigation = useNavigation();
@@ -27,10 +28,14 @@ const SignupForm = () => {
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
 	const [email, setEmail] = useState("");
+	const [permanentAddress,setPermanentAddress] = useState('');
+	const [phone,setPhone] = useState('')
 	const [focus, setFocus] = useState(false);
 	const [focus2, setFocus2] = useState(false);
 	const [focus3, setFocus3] = useState(false);
 	const [focus4, setFocus4] = useState(false);
+	const [focusAddress,setFocusAddress] = useState(false)
+	const [focusPhone,setFocusPhone] = useState(false)
 	const [secure, setSecure] = useState(true);
 	const [role, setRole] = useState({
 		value: "Client",
@@ -57,6 +62,8 @@ const SignupForm = () => {
 			email: email,
 			password: password,
 			role: role.value ==="Client"?"PASSAGER":"ARTISAN",
+			permanentAddress:permanentAddress,
+			phone:phone
 		}))
 		navigation.navigate('CompleteRegister')
 	};
@@ -69,6 +76,8 @@ const SignupForm = () => {
 					email: email,
 					password: password,
 					role: role.value ==="Client"?"PASSAGER":"ARTISAN",
+					permanentAddress:permanentAddress,
+					phone:parseInt(phone)
 				},
 				{
 					headers: {
@@ -78,11 +87,12 @@ const SignupForm = () => {
 			)
 			.then((res) => {
 				dispatch(signUpStart());
-				toast.show("Loading...", {
+				toast.show(<View style={{flex:1,flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:10,paddingVertical:5}}>
+					<ActivityIndicator color="#fff"/>
+					<Text style={{fontSize:18,fontWeight:'300',color:"#fff", marginLeft:10}}>Nous vous inscrivez dans une moment, Patientez s'il vous plait.</Text>
+				</View>, {
 					normalColor: "#545dff",
-					icon: (
-						<AntDesign size={24} name="loading1" color={colors.gray[200]} />
-					),
+					
 				});
 				console.log(res.data);
 				dispatch(signUpSuccess());
@@ -134,7 +144,9 @@ const SignupForm = () => {
 					<View
 						style={
 							!focus
-								? styles.inputField
+								? [styles.inputField,styles.row,
+									{ justifyContent: "space-between", alignItems: "center" },
+							  ]
 								: [
 										styles.inputField,
 										{
@@ -142,6 +154,9 @@ const SignupForm = () => {
 											transform: [{ scale: 1.08 }],
 											marginVertical: 10,
 										},
+										styles.row,
+										{ justifyContent: "space-between", alignItems: "center" },
+								  
 								  ]
 						}
 					>
@@ -154,11 +169,19 @@ const SignupForm = () => {
 							textContentType="givenName"
 							placeholder="name complet"
 						/>
+						<Ionicons
+							size={18}
+							color={colors.gray[300]}
+							name="person-sharp"
+						/>
 					</View>
 					<View
 						style={
 							!focus2
-								? styles.inputField
+								? [styles.inputField,
+									styles.row,
+									{ justifyContent: "space-between", alignItems: "center" },
+							  ]
 								: [
 										styles.inputField,
 										{
@@ -166,6 +189,9 @@ const SignupForm = () => {
 											transform: [{ scale: 1.08 }],
 											marginVertical: 10,
 										},
+										styles.row,
+										{ justifyContent: "space-between", alignItems: "center" },
+								  
 								  ]
 						}
 					>
@@ -177,6 +203,45 @@ const SignupForm = () => {
 							autoCompleteType="email"
 							textContentType="emailAddress"
 							placeholder="E-mail"
+						/>
+						<Ionicons
+							size={18}
+							color={colors.gray[300]}
+							name="mail-sharp"
+						/>
+					</View>
+					<View
+						style={
+							!focus2
+								? [styles.inputField,
+									styles.row,
+									{ justifyContent: "space-between", alignItems: "center" },
+							  ]
+								: [
+										styles.inputField,
+										{
+											elevation: 4,
+											transform: [{ scale: 1.08 }],
+											marginVertical: 10,
+										},styles.row,
+										{ justifyContent: "space-between", alignItems: "center" },
+								  
+								  ]
+						}
+					>
+						<TextInput
+							value={phone}
+							onChangeText={(value) => setPhone(value)}
+							onEndEditing={() => setFocusPhone(false)}
+							onFocus={() => setFocusPhone(true)}
+							keyboardType="phone-pad"
+							textContentType="telephoneNumber"
+							placeholder="Numero de télephone"
+						/>
+						<Ionicons
+							size={18}
+							color={colors.gray[300]}
+							name="phone-portrait-sharp"
 						/>
 					</View>
 					<View
@@ -215,6 +280,43 @@ const SignupForm = () => {
 							name={secure ? "eye-off-outline" : "eye-sharp"}
 						/>
 					</View>
+					<View
+						style={
+							!focus3
+								? [
+										styles.inputField,
+										styles.row,
+										{ justifyContent: "space-between", alignItems: "center" },
+								  ]
+								: [
+										styles.inputField,
+										{
+											elevation: 4,
+											transform: [{ scale: 1.08 }],
+											marginVertical: 10,
+										},
+										styles.row,
+										{ justifyContent: "space-between", alignItems: "center" },
+								  ]
+						}
+					>
+						<TextInput
+							value={permanentAddress}
+							onChangeText={(value) => setPermanentAddress(value)}
+							
+							onEndEditing={() => setFocusAddress(false)}
+							onFocus={() => setFocusAddress(true)}
+							textContentType="addressCityAndState"
+							placeholder="Adresse permanent"
+						/>
+						<Ionicons
+							size={18}
+							color={colors.gray[300]}
+							name="location-sharp"
+						/>
+						
+					</View>
+
 					<View
 						style={
 							!focus4
@@ -256,6 +358,7 @@ const SignupForm = () => {
 								textInputBackgroundColor={colors.gray[100]}
 								searchStyle={{ iconColor: colors.dark[400] }}
 							/>
+							
 					</View>
 				</View>
 

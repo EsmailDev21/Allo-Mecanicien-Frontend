@@ -20,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import { selectUserData } from "../redux/slices/userSlice";
 import axios from "axios";
 import { API_URL } from "../url";
+import { TouchableRipple } from "react-native-paper";
 
 const ProfileComp = () => {
 	const navigation = useNavigation();
@@ -95,29 +96,29 @@ const ProfileComp = () => {
 				/>
 			</View>
 
-			<Pressable
+			<TouchableOpacity
 				onPress={() => logoutHandler()}
 				style={
-					pressed
-						? [styles.buttonPrimary, styles.row, styling.btnRed]
-						: [styles.buttonPrimary, styles.row, styling.btnRedClick]
+					
+						
+						[styles.buttonPrimary, styles.row, styling.btnRedClick]
 				}
 			>
 				<Ionicons
 					name="log-out-outline"
 					size={24}
-					color={pressed ? "white" : "tomato"}
+					color= "tomato" 
 				/>
 				<Text
 					style={
-						pressed
-							? [{ marginHorizontal: 10, fontSize: 18, color: "white" }]
-							: [{ marginHorizontal: 10, fontSize: 18, color: "tomato" }]
+						
+							{ marginHorizontal: 10, fontSize: 18, color: "tomato" }
+							
 					}
 				>
 					Déconnexion
 				</Text>
-			</Pressable>
+			</TouchableOpacity>
 		</View>
 	);
 };

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "allomec",
-    "slug": "allomec",
+    "name": "Allo mecanicien",
+    "slug": "allo-mecanicien",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,18 +23,22 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "NOTIFICATIONS"
+      ],
+      "useNextNotificationsApi": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins":[
+    "plugins": [
       [
         "expo-image-picker",
-        {
-          "photosPermission": "The app need access to your photos "
-        }
+        "expo-notifications"
+        
       ]
-    ]
+    ],
+    "description": ""
   }
 }
